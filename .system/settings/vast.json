@@ -1,0 +1,6 @@
+{
+  "api-key": "API_KEY_입력",
+  "ssh-key-path": "~/.ssh/vast_ed25519",
+  "l-port": 8080,
+  "r-port": 8080
+}
