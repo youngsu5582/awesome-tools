@@ -1,0 +1,42 @@
+{
+  "pem_key_path": "~/.ssh/키-이름.pem",
+  "aws_profile": "mfa",
+  "ssh_user": "ec2-user",
+  "default_name_filter": "필터 걸 이름",
+  "regions": [
+    {
+      "code": "ap-northeast-2",
+      "name": "서울",
+      "name_en": "Seoul"
+    },
+    {
+      "code": "us-east-1",
+      "name": "북부 버지니아",
+      "name_en": "N. Virginia"
+    },
+    {
+      "code": "eu-west-2",
+      "name": "런던",
+      "name_en": "London"
+    },
+    {
+      "code": "eu-north-1",
+      "name": "스톡홀름",
+      "name_en": "Stockholm"
+    },
+    {
+      "code": "us-west-2",
+      "name": "오리건",
+      "name_en": "Oregon"
+    },
+    {
+      "code": "sa-east-1",
+      "name": "상파울루",
+      "name_en": "São Paulo"
+    }
+  ],
+  "ssh_options": {
+    "strict_host_key_checking": "no",
+    "connection_timeout": 10
+  }
+}
