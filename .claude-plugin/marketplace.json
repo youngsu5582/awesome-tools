@@ -1,0 +1,16 @@
+{
+  "name": "awesome-tools",
+  "owner": {
+    "name": "youngsu5582",
+    "url": "https://github.com/youngsu5582"
+  },
+  "description": "youngsu5582 가 만들어 쓰는 Claude Code 플러그인 모음 — 지금은 지원 준비 팩 career-next.",
+  "plugins": [
+    {
+      "name": "career-next",
+      "source": "./skills/career-next",
+      "description": "채용 공고 하나에서 시작해 회사 · 직무 정리 → 이력서 방향과 피드백 → 시험 대비(진단 · 모의고사 · 채점)까지 이어 주는 지원 준비 스킬 팩. Job application prep: JD intake, resume feedback, pre-test practice.",
+      "version": "0.1.0"
+    }
+  ]
+}
