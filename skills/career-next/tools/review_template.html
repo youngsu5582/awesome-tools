@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>career-next — 채점</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* 시험 화면과 같은 틀: 위 상태줄(점수) · 문항 탭(문항 점수) · 왼쪽 문제 / 오른쪽 채점 · 아래 이동 막대 */
+:root {
+  color-scheme: dark;
+  --bg: #1f2836; --surface: #273244; --surface-2: #313f55; --sunken: #19212d; --line: #3b4a61;
+  --fg: #e9eef5; --fg-dim: #aab6c7; --fg-faint: #7f8ca2;
+  --accent: #3b8cf5; --nav: #4a5d75;
+  --flag: #f2c14e; --ok: #4fc58b; --warn: #ff8f7f;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.75; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .45; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+a { color: #7fb3ff; }
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface-2); border-radius: 6px; padding: 7px 16px; font-size: 15px; text-decoration: none; color: var(--fg); }
+.btn:hover:not(:disabled) { border-color: var(--accent); }
+.btn.nav { background: var(--nav); border-color: var(--nav); color: #fff; }
+
+.app { height: 100%; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.top { background: var(--sunken); border-bottom: 1px solid var(--line); }
+.top-in { display: flex; align-items: center; gap: 10px; padding: 8px 16px; flex-wrap: wrap; }
+.brand { font-weight: 700; font-size: 16px; margin-right: 4px; }
+.chip { display: inline-flex; align-items: baseline; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 2px 12px; font-size: 13px; color: var(--fg-dim); white-space: nowrap; }
+.chip b { font-family: var(--font-mono); font-size: 17px; color: var(--fg); }
+.spacer { flex: 1 1 auto; }
+
+.tabs { background: var(--sunken); border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs-in { display: flex; align-items: center; gap: 4px; padding: 6px 16px; }
+.tab-group { font-size: 12px; color: var(--fg-faint); margin: 0 4px 0 12px; white-space: nowrap; }
+.tab { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 3px 12px; font-size: 14px; white-space: nowrap; color: var(--fg-dim); display: inline-flex; gap: 8px; align-items: baseline; }
+.tab .ts { font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+.tab.current { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab.current .ts { color: #fff !important; }
+.c-ok { color: var(--ok); } .c-t { color: var(--flag); } .c-x { color: var(--warn); }
+
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); min-height: 0; }
+.pane { min-height: 0; overflow-y: auto; padding: 24px 28px 56px; }
+.pane.q { border-right: 1px solid var(--line); }
+.pane.a { background: var(--sunken); }
+.pane-label { font-size: 13px; color: var(--fg-faint); margin: 0 0 12px; letter-spacing: .02em; display: flex; justify-content: space-between; align-items: baseline; }
+@media (max-width: 900px) {
+  .app { height: auto; min-height: 100%; }
+  .split { grid-template-columns: 1fr; }
+  .pane { overflow: visible; }
+  .pane.q { border-right: 0; border-bottom: 1px solid var(--line); }
+}
+.eyebrow { color: var(--fg-faint); font-size: 13px; letter-spacing: .02em; }
+.q-title { font-size: 24px; line-height: 1.35; font-weight: 700; margin: 4px 0 16px; }
+
+.prose { overflow-wrap: anywhere; }
+.prose > :first-child { margin-top: 0; }
+.prose p, .prose ul, .prose ol { margin: 0 0 14px; }
+.prose ul, .prose ol { padding-left: 1.4em; }
+.prose li { margin: 4px 0; }
+.prose h2 { font-size: 19px; margin: 28px 0 10px; }
+.prose h2:first-child { margin-top: 0; }
+.prose h3, .prose h4 { font-size: 17px; margin: 20px 0 8px; }
+.prose strong, .prose b { color: #fff; font-weight: 700; }
+.prose code, .inline code, .fb code, .axis code { font-family: var(--font-mono); font-size: .88em; background: var(--surface-2); border-radius: 4px; padding: 1px 5px; }
+code, pre, .diff, .chip b, .tab .ts, .stamp { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+.prose pre { background: var(--sunken); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto; margin: 0 0 16px; }
+.pane.a .prose pre { background: var(--bg); }
+.prose pre code { background: none; padding: 0; font-size: 14px; line-height: 1.6; }
+.prose table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 14px; background: var(--surface); border-radius: 8px; overflow: hidden; }
+.prose th, .prose td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.prose th { background: #384862; font-weight: 700; }
+.prose tr:last-child td { border-bottom: 0; }
+.s0, .s1, .s2 { display: inline-block; min-width: 24px; text-align: center; border-radius: 4px; font-family: var(--font-mono); font-weight: 600; font-size: 13px; padding: 0 6px; }
+.s0 { background: #4a2626; color: var(--warn); } .s1 { background: #43391a; color: var(--flag); } .s2 { background: #1e4433; color: var(--ok); }
+.dn, .prose .dn strong { color: var(--warn); } .up, .prose .up strong { color: var(--ok); }
+
+/* 채점 */
+.stamp { font-family: var(--font-mono); font-size: 22px; font-weight: 700; }
+.stamp small { font-size: 14px; color: var(--fg-faint); font-weight: 400; }
+.ask { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 14px 16px; margin: 0 0 16px; }
+.ask-head { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; margin-bottom: 10px; }
+.mark { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 18px; border: 2.5px solid; line-height: 1; }
+.mark.o { color: var(--ok); border-color: var(--ok); }
+.mark.t { color: var(--flag); border-color: var(--flag); }
+.mark.x { color: var(--warn); border-color: var(--warn); }
+.ask-q { font-size: 14px; color: var(--fg-dim); padding-top: 5px; }
+.ask-q b { color: var(--fg); margin-right: 6px; }
+.lbl { font-size: 12px; color: var(--fg-faint); letter-spacing: .04em; margin: 10px 0 4px; }
+.myans { background: var(--sunken); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; white-space: pre-wrap; font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+.myans.empty { color: var(--fg-faint); font-style: italic; }
+.fb { border-left: 3px solid var(--flag); background: rgba(242, 193, 78, .08); padding: 9px 13px; border-radius: 0 8px 8px 0; font-size: 14.5px; margin: 10px 0 0; }
+.fb.o { border-color: var(--ok); background: rgba(79, 197, 139, .08); }
+.fb.x { border-color: var(--warn); background: rgba(255, 143, 127, .09); }
+.prose .fb { margin: 0 0 10px; }
+.model { border: 1px solid #2f5d46; background: #15261e; border-radius: 8px; padding: 10px 14px; font-size: 14.5px; margin: 10px 0 0; }
+.model .h { color: var(--ok); font-weight: 700; font-size: 12px; letter-spacing: .04em; display: block; margin-bottom: 2px; }
+.axes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 0 0 16px; }
+.axis { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 10px; font-size: 13px; color: var(--fg-dim); }
+.axis .n { display: flex; justify-content: space-between; align-items: baseline; color: var(--fg); font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+@media (max-width: 1200px) { .axes { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+pre.flow { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font: 13px/1.65 var(--font-mono); white-space: pre; overflow-x: auto; margin: 8px 0 0; }
+.diff { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 0; font: 13px/1.7 var(--font-mono); overflow-x: auto; margin: 8px 0 0; }
+.diff .ln { display: grid; grid-template-columns: 22px max-content minmax(160px, 1fr); gap: 0 10px; padding: 0 12px; white-space: pre; }
+.diff .ln .sg { color: var(--fg-faint); }
+.diff .ln.del { background: rgba(255, 143, 127, .12); color: #ffbdb2; }
+.diff .ln.add { background: rgba(79, 197, 139, .13); color: #b4f2cf; }
+.diff .ln .why { color: var(--fg-faint); font-family: var(--font-body); font-size: 12.5px; white-space: normal; }
+.diff .ln.del .why { color: #ff9f92; }
+.checks { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0 0; }
+.checks td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.res { font-weight: 700; white-space: nowrap; }
+details.code { margin-top: 12px; }
+details.code summary { cursor: pointer; color: var(--fg-dim); font-size: 14px; }
+details.code pre { background: var(--sunken); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font: 12.5px/1.6 var(--font-mono); overflow: auto; max-height: 420px; }
+.h-sec { font-size: 15px; font-weight: 700; margin: 22px 0 6px; }
+
+.foot { background: var(--sunken); border-top: 1px solid var(--line); }
+.foot-in { display: flex; align-items: center; gap: 8px; padding: 10px 16px; flex-wrap: wrap; }
+.legend { font-size: 13px; color: var(--fg-faint); display: inline-flex; gap: 12px; align-items: center; }
+.legend .mark { width: 22px; height: 22px; font-size: 12px; border-width: 2px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><div class="top-in" id="top"></div></header>
+  <nav class="tabs" aria-label="문항"><div class="tabs-in" id="tabs"></div></nav>
+  <main class="split">
+    <article class="pane q" id="pane-q"></article>
+    <section class="pane a" id="pane-a"></section>
+  </main>
+  <footer class="foot"><div class="foot-in">
+    <button class="btn nav" id="prev" type="button">이전</button>
+    <button class="btn nav" id="next" type="button">다음</button>
+    <span class="spacer"></span>
+    <span class="legend">
+      <span style="display:inline-flex;gap:4px;align-items:center"><span class="mark o">○</span>1</span>
+      <span style="display:inline-flex;gap:4px;align-items:center"><span class="mark t">△</span>½</span>
+      <span style="display:inline-flex;gap:4px;align-items:center"><span class="mark x">×</span>0</span>
+      <span id="legend-note"></span>
+    </span>
+  </div></footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script id="review-data" type="application/json">/*__DATA__*/</script>
+<script>
+(() => {
+  'use strict';
+  const { problem: P, answers: A, review: R } = JSON.parse(document.getElementById('review-data').textContent);
+  const CIRCLED = ['①', '②', '③', '④', '⑤', '⑥'];
+  const MARK = { '○': ['o', 1], '△': ['t', 0.5], '×': ['x', 0] };
+  const TOTAL_MIN = P.schedule.reduce((a, s) => a + s.min, 0);
+  document.title = `${P.title} 채점 — career-next`;
+
+  const $ = s => document.querySelector(s);
+  const el = (tag, attrs = {}, html) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) { if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v; else n.setAttribute(k, v); }
+    if (html !== undefined) n.innerHTML = html;
+    return n;
+  };
+  function md(s, inline) {
+    try {
+      if (window.marked) {
+        const h = inline ? window.marked.parseInline(s) : window.marked.parse(s, { gfm: true });
+        return window.DOMPurify ? window.DOMPurify.sanitize(h) : h;
+      }
+    } catch (e) { /* 아래로 */ }
+    const d = document.createElement('div'); d.style.whiteSpace = 'pre-wrap'; d.textContent = s; return d.outerHTML;
+  }
+  const extLinks = root => root.querySelectorAll('a[href^="http"]').forEach(a => { a.target = '_blank'; a.rel = 'noopener'; });
+  const ratioClass = r => (r >= 0.9 ? 'c-ok' : r >= 0.5 ? 'c-t' : 'c-x');
+  const fmtPt = x => (Math.round(x * 100) / 100).toString();
+
+  const shortScore = q => { const g = R.short[q.id]; return g.reduce((a, m) => a + MARK[m.mark][1], 0) / g.length; };
+  const MULTI = P.coding.length > 1;
+  const ITEMS = [
+    { id: 'overview', kind: 'overview', tab: '총평' },
+    ...P.coding.map((c, i) => ({ id: c.id, kind: 'coding', group: MULTI ? '코딩' : undefined, tab: MULTI ? String(c.no) : '코딩',
+      score: `${R.coding[i].score}`, ratio: parseFloat(R.coding[i].score) / 100, q: c, g: R.coding[i], my: A.coding[i] })),
+    ...P.short.map(q => { const s = shortScore(q); return { id: q.id, kind: 'short', group: '주관식', tab: String(q.no), score: fmtPt(s), ratio: s, q }; }),
+    ...P.essay.map(s => { const g = R.essay[s.id]; return { id: s.id, kind: 'essay', group: '서술형', tab: String(s.no), score: `${g.score}/10`, ratio: g.score / 10, q: s }; }),
+  ];
+  const byId = Object.fromEntries(ITEMS.map(it => [it.id, it]));
+  let cur = byId[location.hash.slice(1)] ? location.hash.slice(1) : 'overview';
+
+  function renderTop() {
+    const t = $('#top'); t.innerHTML = '';
+    t.append(el('span', { class: 'brand', text: `${P.title} — 채점` }));
+    if (P.coding.length) {
+      const sum = R.totals.coding !== undefined ? R.totals.coding : fmtPt(R.coding.reduce((a, g) => a + (parseFloat(g.score) || 0), 0));
+      t.append(el('span', { class: 'chip' }, `코딩 <b>${sum}</b> / ${P.coding.length * 100}`));
+    }
+    if (P.short.length) t.append(el('span', { class: 'chip' }, `주관식 <b>${R.totals.short}</b> / ${P.short.length}`));
+    if (P.essay.length) t.append(el('span', { class: 'chip' }, `서술형 <b>${R.totals.essay}</b> / ${P.essay.length * 10}`));
+    t.append(el('span', { class: 'spacer' }));
+    t.append(el('span', { class: 'chip' }, `걸린 시간 <b>${R.took}</b> / ${TOTAL_MIN}분`));
+  }
+  function renderTabs() {
+    const box = $('#tabs'); box.innerHTML = ''; let last = null;
+    ITEMS.forEach(it => {
+      if (it.group && it.group !== last) box.append(el('span', { class: 'tab-group', text: it.group }));
+      last = it.group || null;
+      const b = el('button', { type: 'button', class: 'tab' + (it.id === cur ? ' current' : ''), 'data-id': it.id });
+      b.append(document.createTextNode(it.tab));
+      if (it.score !== undefined) b.append(el('span', { class: 'ts ' + ratioClass(it.ratio), text: it.score }));
+      b.addEventListener('click', () => go(it.id));
+      box.append(b);
+    });
+    const i = ITEMS.indexOf(byId[cur]);
+    $('#prev').disabled = i <= 0; $('#next').disabled = i >= ITEMS.length - 1;
+  }
+  function head(pane, eyebrow, title) { pane.append(el('div', { class: 'eyebrow', text: eyebrow }), el('h1', { class: 'q-title', text: title })); }
+  function label(pane, left, right) { const l = el('p', { class: 'pane-label' }); l.append(el('span', { text: left })); if (right) l.append(el('span', { class: 'stamp' }, right)); pane.append(l); }
+  function myAns(text) { const t = (text || '').trim(); return el('div', { class: 'myans' + (t ? '' : ' empty'), text: t || '(빈 칸)' }); }
+  function fb(kind, html) { return el('div', { class: 'fb ' + kind }, html); }
+
+  function render() {
+    const it = byId[cur]; const q = $('#pane-q'), a = $('#pane-a');
+    q.innerHTML = ''; a.innerHTML = ''; q.scrollTop = 0; a.scrollTop = 0;
+
+    if (it.kind === 'overview') {
+      head(q, `${P.title} · ${R.graded} 채점`, '총평');
+      q.append(el('div', { class: 'prose' }, md(R.overview.left)));
+      label(a, '고칠 곳');
+      a.append(el('div', { class: 'prose' }, md(R.overview.right)));
+    }
+
+    if (it.kind === 'coding') {
+      const c = it.q, g = it.g, my = it.my;
+      head(q, MULTI ? `코딩 ${c.no} / ${P.coding.length} · 문항당 ${P.rec.coding}분` : `코딩 · ${P.rec.coding}분`, c.title);
+      const body = el('div', { class: 'prose' }, md(c.md)); extLinks(body); q.append(body);
+      if (c.url) q.append(el('a', { class: 'btn', href: c.url, target: '_blank', rel: 'noopener', text: '문제 페이지 열기 (새 탭)' }));
+      q.append(el('div', { class: 'lbl', text: '내 결과' }), myAns(my.result));
+      q.append(el('div', { class: 'lbl', text: '내 메모' }), myAns(my.memo));
+      const det = el('details', { class: 'code' }); det.append(el('summary', { text: '제출한 코드 전체 보기' }), el('pre', { text: my.code || '(코드 없음)' }));
+      q.append(det);
+
+      label(a, '채점', `${g.score}<small> / 100</small>`);
+      a.append(fb(g.verdictKind || 'o', md(g.verdict, true)));
+      (g.issues || []).forEach(([k, t, d]) => a.append(fb(k, `<b>${t}</b><br>${md(d, true)}`)));
+      if (g.diff) {
+        a.append(el('div', { class: 'h-sec', text: '이렇게 고친다' }));
+        const diff = el('div', { class: 'diff' });
+        g.diff.forEach(([k, line, why]) => {
+          const row = el('div', { class: 'ln ' + k });
+          row.append(el('span', { class: 'sg', text: k === 'del' ? '−' : k === 'add' ? '+' : ' ' }), el('span', { text: line }), el('span', { class: 'why', text: why ? '← ' + why : '' }));
+          diff.append(row);
+        });
+        a.append(diff);
+      }
+      if (g.alt) { a.append(el('div', { class: 'h-sec', text: g.altTitle || '다른 풀이' })); a.append(el('pre', { class: 'flow', text: g.alt })); }
+      if (g.checks) {
+        a.append(el('div', { class: 'h-sec', text: '스크립트로 확인 (실측)' }));
+        const tbl = el('table', { class: 'checks' });
+        g.checks.forEach(([k, what, res]) => { const tr = el('tr'); tr.append(el('td', { text: what }), el('td', { class: 'res ' + (k === 'o' ? 'c-ok' : 'c-x'), text: res })); tbl.append(tr); });
+        a.append(tbl);
+      }
+      if (g.tip) a.append(el('div', { class: 'inline', style: 'margin-top:14px;font-size:14.5px' }, md(g.tip, true)));
+    }
+
+    if (it.kind === 'short') {
+      const d = it.q, g = R.short[d.id], my = A.short[d.id] || [];
+      head(q, `주관식 ${d.no} / ${P.short.length} · 문항당 ${P.rec.short}분`, d.title);
+      const body = el('div', { class: 'prose' }, md(d.md)); extLinks(body); q.append(body);
+
+      label(a, '채점', `${it.score}<small> / 1</small>`);
+      d.asks.forEach((ask, k) => {
+        const m = g[k]; const [cls] = MARK[m.mark];
+        const box = el('div', { class: 'ask' });
+        const h = el('div', { class: 'ask-head' });
+        h.append(el('span', { class: 'mark ' + cls, text: m.mark }), el('div', { class: 'ask-q inline' }, `<b>${CIRCLED[k]}</b>${md(ask, true)}`));
+        box.append(h);
+        box.append(el('div', { class: 'lbl', text: '내 답' }), myAns(my[k]));
+        box.append(fb(cls, md(m.comment, true)));
+        if (m.model) { const mo = el('div', { class: 'model inline' }); mo.append(el('span', { class: 'h', text: '모범답안' })); mo.insertAdjacentHTML('beforeend', md(m.model, true)); box.append(mo); }
+        a.append(box);
+      });
+    }
+
+    if (it.kind === 'essay') {
+      const d = it.q, g = R.essay[d.id];
+      head(q, `서술형 ${d.no} / ${P.essay.length} · 문항당 ${P.rec.essay}분`, d.title);
+      const body = el('div', { class: 'prose' }, md(d.md)); extLinks(body); q.append(body);
+      q.append(el('div', { class: 'lbl', text: '내 답' }), myAns(A.essay[d.id]));
+
+      label(a, '채점 — 5항목 × 0 · 1 · 2', `${g.score}<small> / 10</small>`);
+      const axes = el('div', { class: 'axes' });
+      g.axes.forEach(([name, s, why]) => {
+        const box = el('div', { class: 'axis' });
+        box.append(el('div', { class: 'n' }, `<span>${name}</span><span class="s${s}">${s}</span>`), el('div', { text: why }));
+        axes.append(box);
+      });
+      a.append(axes);
+      if (g.good) a.append(fb('o', '<b>잘한 것</b> — ' + md(g.good, true)));
+      a.append(fb('x', md(g.core, true)));
+      if (g.flow) { a.append(el('div', { class: 'h-sec', text: '모범 흐름' })); a.append(el('pre', { class: 'flow', text: g.flow })); }
+      if (g.note) a.append(el('div', { class: 'inline', style: 'margin-top:14px;font-size:14.5px;color:var(--fg-dim)' }, md(g.note, true)));
+    }
+    renderTabs();
+  }
+  function go(id) { cur = id; history.replaceState(null, '', '#' + id); render(); }
+  $('#prev').addEventListener('click', () => { const i = ITEMS.indexOf(byId[cur]); if (i > 0) go(ITEMS[i - 1].id); });
+  $('#next').addEventListener('click', () => { const i = ITEMS.indexOf(byId[cur]); if (i < ITEMS.length - 1) go(ITEMS[i + 1].id); });
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input, textarea, summary')) return;
+    if (e.key === 'ArrowRight') $('#next').click();
+    if (e.key === 'ArrowLeft') $('#prev').click();
+  });
+  $('#legend-note').textContent = P.short.length ? '· 문항 점수 = ①②③ 평균 · ← → 키로 이동' : '· ← → 키로 이동';
+  const lg = document.querySelector('.legend');
+  if (!P.short.length) Array.from(lg.children).slice(0, 3).forEach(n => { n.hidden = true; });
+  renderTop(); render();
+})();
+</script>
+</body>
+</html>
