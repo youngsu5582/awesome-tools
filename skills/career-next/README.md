@@ -58,6 +58,8 @@ claude --plugin-dir awesome-tools/skills/career-next
 지원 준비 어디서부터 하지? / 지난번에 이어서      → guide
 ```
 
+짧게 말해도 되고 자세히 말해도 된다 — 빠진 건 Claude 가 묻는다. 단계마다 요청 예 · Claude 가 되묻는 것 · 결과물 모양은 [docs/EXAMPLES.md](docs/EXAMPLES.md).
+
 결과물은 처음에 정한 폴더(예: `./career-next/<회사>/`)에 쌓인다 — 구조는 [docs/WORKSPACE.md](docs/WORKSPACE.md). 이력서 · 답안이 들어가니 **공개 저장소 밖**에 둔다.
 
 ## 지키는 것
@@ -83,6 +85,7 @@ career-next/
     ├── PROBLEM.md               # 무엇을 닫는가
     ├── PERSONA.md               # 누구를 위해 + 입력 스키마
     ├── WORKSPACE.md             # 결과물 폴더
+    ├── EXAMPLES.md              # 이렇게 말하면 이렇게 나온다 (가상 회사로 한 바퀴)
     ├── TEST_CASES.md            # 검증 가능한 입력과 판정
     ├── MOCK_FORMAT.md           # 모의고사 문제 파일 형식
     └── RUBRIC.md                # 채점 기준 · 채점 파일 형식
