@@ -1,6 +1,6 @@
 ---
 name: guide
-description: career-next 팩의 길잡이 — 지원하는 사람이 지금 가진 것(공고 · 이력서 · 시험 일정)과 결과물 폴더에 쌓인 것을 보고, intake · resume · pretest 중 어디서 시작하거나 이어갈지 한 걸음을 정해 준다. 지원 준비를 처음 시작할 때, 어디서부터 해야 할지 모를 때, 며칠 뒤 이어서 할 때 사용. "지원 준비 어디서부터", "이직 준비 시작", "취업 준비 도와줘", "career-next", "지난번에 이어서", "job application prep", "where do I start", "continue my application prep" 등의 요청 시 사용.
+description: career-next 팩의 길잡이 — 지원하는 사람이 지금 가진 것(공고 · 이력서 · 시험 일정)과 결과물 폴더에 쌓인 것을 보고, intake · resume · pretest · interview 중 어디서 시작하거나 이어갈지 한 걸음을 정해 준다. 지원 준비를 처음 시작할 때, 어디서부터 해야 할지 모를 때, 며칠 뒤 이어서 할 때 사용. "지원 준비 어디서부터", "이직 준비 시작", "취업 준비 도와줘", "career-next", "지난번에 이어서", "job application prep", "where do I start", "continue my application prep" 등의 요청 시 사용.
 ---
 
 # guide — 어디서 시작하고, 어디까지 왔나
@@ -12,13 +12,14 @@ career-next 는 공고 하나에서 뽑은 **지원 프로필**을 세 단계가
 | `career-next:intake` | 공고를 받았을 때 (항상 첫 단계 권장) | 공고 링크 또는 본문 | `profile.md` · `links.md` |
 | `career-next:resume` | 이력서를 이 공고에 맞출 때 | 프로필 + 이력서(없으면 경험 재료) | `resume/` match · draft · feedback |
 | `career-next:pretest` | 절차에 시험이 있을 때 | 프로필의 시험 형식 + 시험 날짜 | `pretest/` 계획 · 진단 · 모의고사 · 채점 · 마지막 한 장 |
+| `career-next:interview` | 면접이 잡혔을 때 | 프로필 + 이력서 피드백 + 면접 형식 (있으면 약점 지도) | `interview/` 대표 경험 · 질문 은행 · 면접관 준비물 · 채점 |
 
-면접 준비 단계는 아직 없다 — 지금은 `resume/feedback.md` 의 면접 질문 후보와 `pretest/weakness.md` 가 그 재료다.
+모의 면접은 실시간 음성 AI(ChatGPT 음성 모드 · Gemini Live 등)로 보고, Claude 는 면접관 준비물과 대화 기록 채점을 맡는다.
 
 ## 1. 처음이면 — 한 걸음만 정한다
 
 지원하는 사람에게 세 가지를 묻고(이미 말했으면 묻지 않는다), 아래 표에서 **한 걸음**을 고른다.
-① 공고가 있나 ② 이력서가 있나 ③ 시험이 잡혀 있나, 며칠 남았나
+① 공고가 있나 ② 이력서가 있나 ③ 시험이 잡혀 있나, 며칠 남았나 ④ 면접이 잡혀 있나
 
 | 상황 | 첫 걸음 |
 |---|---|
@@ -27,6 +28,7 @@ career-next 는 공고 하나에서 뽑은 **지원 프로필**을 세 단계가
 | 시험이 1주일 안쪽 | intake 의 시험 형식 질문만 하고 바로 pretest. resume 은 시험 뒤로 미룬다 |
 | 공고 없이 이력서만 | resume — 단 공고가 없으면 "회사 Fit" 판정을 못 한다고 먼저 말하고, 목표 직무 하나를 받는다 |
 | 시험 형식을 모른다 | intake 의 열린 질문으로 방향만 잡고 pretest 는 흔한 구성에서 시작 |
+| 면접이 잡혔다 | 프로필 · 이력서 피드백이 없으면 intake → resume 를 짧게 하고 interview. 1주일 안쪽이면 interview 의 대표 경험 · 마지막 한 장부터 |
 
 결과물 폴더를 아직 안 정했으면 이때 정한다 — 회사별 폴더를 이미 쓰고 있으면 그 안의 `career-next/`, 아니면 `./career-next/<회사-슬러그>/`. 이력서 · 답안이 들어가는 폴더라 **공개 저장소 밖**을 권한다 (`docs/WORKSPACE.md`).
 
@@ -37,7 +39,8 @@ career-next 는 공고 하나에서 뽑은 **지원 프로필**을 세 단계가
 1. `profile.md` 의 「열린 질문」 — 답이 생긴 게 있나 (특히 시험 형식이 `가정` 인지)
 2. `resume/feedback.md` 맨 위 회차 — 판정과 「고칠 것 우선순위」 중 남은 것
 3. `pretest/plan.md` 와 `pretest/scores.md` — 오늘 날짜 기준 계획 위치, 마지막 회차의 「다음 회차에 고칠 것」
-4. 시험 날짜가 지났으면 → 결과를 묻고, 면접 준비 재료(면접 질문 후보 · 약점 지도)를 짚는다
+4. `interview/scores.md` 와 회고 — 마지막 모의 면접 회차, 자주 멈춘 단, 남은 면접 일정
+5. 시험 날짜가 지났으면 → 결과를 묻고, 면접이 잡혔으면 interview 로
 
 ## 3. 모든 단계의 공통 규칙
 

@@ -94,7 +94,7 @@ description: 지원 프로필(career-next:intake 결과)이나 공고에 맞춰 
 
 - 고친 이력서가 생기면 → 이 단계를 다시 (feedback.md 에 다음 회차)
 - 절차에 시험이 있으면 → `career-next:pretest`
-- `feedback.md` 의 **면접 질문 후보**와 **정말 없는 것** 갭은 면접 준비 단계의 재료가 된다
+- `feedback.md` 의 **면접 질문 후보**와 **정말 없는 것** 갭은 `career-next:interview` 의 재료가 된다
 
 ## 6. 하지 않는 것
 
