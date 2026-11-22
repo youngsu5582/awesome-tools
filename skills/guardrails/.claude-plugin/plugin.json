@@ -1,0 +1,20 @@
+{
+  "name": "guardrails",
+  "version": "0.1.0",
+  "description": "말로 한 규칙을 코드로 막는 Claude Code hook 두 개 — 브랜치 전환을 막고 worktree 를 쓰게 하는 가드, 글로 묻고 끝나면 질문 도구로 다시 묻게 돌려보내는 Stop hook. 판정마다 한 줄씩 기록을 남긴다.",
+  "author": {
+    "name": "youngsu5582",
+    "email": "98307410+youngsu5582@users.noreply.github.com",
+    "url": "https://github.com/youngsu5582"
+  },
+  "repository": "https://github.com/youngsu5582/awesome-tools",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "hooks",
+    "guardrails",
+    "worktree",
+    "ask-user-question",
+    "harness"
+  ]
+}

@@ -14,6 +14,18 @@
 | `aws/` | EC2 접속을 간소화하는 AWS CLI 스크립트와 도움말 |
 | `git/` | Git/GitHub 워크플로우를 돕는 zsh 함수 모음 |
 | `wiki/` | 사내/개인 위키에 올릴 문서 템플릿이나 초안(추후 추가 예정) |
+| `skills/career-next/` | 공고 하나에서 시작하는 지원 준비 Claude Code 플러그인 (공고 정리 → 이력서 → 시험 대비) — [README](skills/career-next/README.md) |
+| `skills/guardrails/` | 말로 한 규칙을 hook 으로 지키게 하는 Claude Code 플러그인 (브랜치 전환 대신 worktree · 글로 묻고 끝나면 질문 도구로) — [README](skills/guardrails/README.md) |
+
+### Claude Code 플러그인
+
+이 저장소는 Claude Code 플러그인 마켓플레이스(`.claude-plugin/marketplace.json`)이기도 하다.
+
+```text
+/plugin marketplace add youngsu5582/awesome-tools
+/plugin install career-next@awesome-tools
+/plugin install guardrails@awesome-tools
+```
 
 ## 사전 세팅
 1. **필수 도구**
