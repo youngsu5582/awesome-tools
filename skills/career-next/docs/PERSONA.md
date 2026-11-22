@@ -23,6 +23,7 @@
 | 이력서 제출 전 | "이거 그대로 내도 되나?" | "전반적으로 좋습니다" + 일반론. 회사 기준 판정도, 링크 확인도 없다 |
 | 시험 2주 전 | "문제를 더 풀어야 하나, 서술형을 써 봐야 하나" | 문제 은행만 준다. 형식 · 시간 · 약점에 맞춘 계획이 없다 |
 | 시험 전날 | "뭘 다시 보지?" | 다 다시 본다. 자주 틀린 것 · 실수 방지가 한 장으로 없다 |
+| 면접 1주 전 | "이 프로젝트 물어보면 어디까지 말할 수 있지?" | 예상 질문 목록만 준다. 꼬리 질문으로 어디서 막히는지, 말로 하면 어떻게 나오는지는 모른다 |
 
 ---
 
@@ -58,6 +59,12 @@ exam:                                   # pretest
   language: java
   tools: { search: false, ide: false }
   date: 2026-11-21
+interview:                              # interview
+  date: 2026-11-26
+  minutes: 60
+  interviewers: 실무자 2                 # 실무자 · 리더
+  live_coding: false                    # true 면 형식만 기록
+  voice_ai: chatgpt                     # 모의 면접을 볼 실시간 음성 AI (chatgpt · gemini …)
 daily_hours: 1.5
 output_dir: ./career-next/acme/         # 처음에 묻는다
 tone: cold                              # 기본. 지원자가 바꿀 수 있다

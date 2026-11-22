@@ -1,0 +1,20 @@
+{
+  "description": "브랜치 전환 가드 · 글로 묻고 끝나면 질문 도구로 되돌리기",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-worktree.sh\"", "timeout": 5 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/ask-via-tool.sh\"", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}
