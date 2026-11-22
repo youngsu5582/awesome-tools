@@ -4,13 +4,19 @@
     "name": "youngsu5582",
     "url": "https://github.com/youngsu5582"
   },
-  "description": "youngsu5582 가 만들어 쓰는 Claude Code 플러그인 모음 — 지금은 지원 준비 팩 career-next.",
+  "description": "youngsu5582 가 만들어 쓰는 Claude Code 플러그인 모음 — 지원 준비 팩 career-next, 말로 한 규칙을 hook 으로 지키게 하는 guardrails.",
   "plugins": [
     {
       "name": "career-next",
       "source": "./skills/career-next",
       "description": "채용 공고 하나에서 시작해 회사 · 직무 정리 → 이력서 방향과 피드백 → 시험 대비(진단 · 모의고사 · 채점) → 기술 면접(경험 사다리 · 음성 모의 면접 채점)까지 이어 주는 지원 준비 스킬 팩. Job application prep: JD intake, resume feedback, pre-test practice, technical interview prep.",
       "version": "0.2.0"
+    },
+    {
+      "name": "guardrails",
+      "source": "./skills/guardrails",
+      "description": "말로 한 규칙을 코드로 막는 Claude Code hook 두 개 — git checkout/switch 로 브랜치를 바꾸려 하면 막고 worktree 를 쓰게 하는 가드, 응답이 글로 묻고 끝나면 AskUserQuestion 으로 다시 묻게 돌려보내는 Stop hook. Guard hooks: block branch switching in favor of worktrees, and bounce trailing-text questions back to AskUserQuestion.",
+      "version": "0.1.0"
     }
   ]
 }
